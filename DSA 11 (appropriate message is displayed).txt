@@ -1,0 +1,140 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+struct Student {
+    int rollNumber;
+    string name;
+    string division;
+    string address;
+};
+
+// Function to add student information to the file
+void addStudentInfo() {
+    ofstream outFile("students.txt", ios::app);
+    if (!outFile) {
+        cerr << "Error opening file." << endl;
+        return;
+    }
+
+    Student newStudent;
+    cout << "Enter Roll Number: ";
+    cin >> newStudent.rollNumber;
+    cout << "Enter Name: ";
+    cin.ignore();
+    getline(cin, newStudent.name);
+    cout << "Enter Division: ";
+    getline(cin, newStudent.division);
+    cout << "Enter Address: ";
+    getline(cin, newStudent.address);
+
+    outFile << newStudent.rollNumber << " " << newStudent.name << " " << newStudent.division << " " << newStudent.address << endl;
+
+    outFile.close();
+}
+
+// Function to delete student information from the file
+void deleteStudentInfo(int rollNumber) {
+    ifstream inFile("students.txt");
+    if (!inFile) {
+        cerr << "Error opening file." << endl;
+        return;
+    }
+
+    ofstream tempFile("temp.txt");
+    if (!tempFile) {
+        cerr << "Error creating temporary file." << endl;
+        inFile.close();
+        return;
+    }
+
+    bool found = false;
+    Student student;
+
+    while (inFile >> student.rollNumber >> student.name >> student.division >> student.address) {
+        if (student.rollNumber != rollNumber) {
+            tempFile << student.rollNumber << " " << student.name << " " << student.division << " " << student.address << endl;
+        } else {
+            found = true;
+        }
+    }
+
+    inFile.close();
+    tempFile.close();
+
+    remove("students.txt");
+    rename("temp.txt", "students.txt");
+
+    if (!found) {
+        cout << "Record with Roll Number " << rollNumber << " not found." << endl;
+    } else {
+        cout << "Record with Roll Number " << rollNumber << " deleted successfully." << endl;
+    }
+}
+
+// Function to display student information
+void displayStudentInfo(int rollNumber) {
+    ifstream inFile("students.txt");
+    if (!inFile) {
+        cerr << "Error opening file." << endl;
+        return;
+    }
+
+    Student student;
+    bool found = false;
+
+    while (inFile >> student.rollNumber >> student.name >> student.division >> student.address) {
+        if (student.rollNumber == rollNumber) {
+            found = true;
+            cout << "Roll Number: " << student.rollNumber << endl;
+            cout << "Name: " << student.name << endl;
+            cout << "Division: " << student.division << endl;
+            cout << "Address: " << student.address << endl;
+            break;
+        }
+    }
+
+    inFile.close();
+
+    if (!found) {
+        cout << "Record with Roll Number " << rollNumber << " not found." << endl;
+    }
+}
+
+int main() {
+    int choice;
+    int rollNumber;
+
+    while (true) {
+        cout << "1. Add Student Information" << endl;
+        cout << "2. Delete Student Information" << endl;
+        cout << "3. Display Student Information" << endl;
+        cout << "4. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addStudentInfo();
+                break;
+            case 2:
+                cout << "Enter Roll Number to delete: ";
+                cin >> rollNumber;
+                deleteStudentInfo(rollNumber);
+                break;
+            case 3:
+                cout << "Enter Roll Number to display: ";
+                cin >> rollNumber;
+                displayStudentInfo(rollNumber);
+                break;
+            case 4:
+                return 0;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    }
+
+    return 0;
+}

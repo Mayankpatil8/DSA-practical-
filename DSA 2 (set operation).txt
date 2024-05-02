@@ -1,0 +1,123 @@
+class SetADT:
+    def __init__(self):
+        self.elements = []
+
+    def add(self, new_element):
+        if new_element not in self.elements:
+            self.elements.append(new_element)
+
+    def remove(self, element):
+        if element in self.elements:
+            self.elements.remove(element)
+
+    def contains(self, element):
+        return element in self.elements
+
+    def size(self):
+        return len(self.elements)
+
+    def iterator(self):
+        return iter(self.elements)
+
+    def intersection(self, other_set):
+        intersection_set = SetADT()
+        for element in self.elements:
+            if other_set.contains(element):
+                intersection_set.add(element)
+        return intersection_set
+
+    def union(self, other_set):
+        union_set = SetADT()
+        for element in self.elements:
+            union_set.add(element)
+        for element in other_set.elements:
+            union_set.add(element)
+        return union_set
+
+    def difference(self, other_set):
+        difference_set = SetADT()
+        for element in self.elements:
+            if not other_set.contains(element):
+                difference_set.add(element)
+        return difference_set
+
+    def subset(self, other_set):
+        for element in self.elements:
+            if not other_set.contains(element):
+                return False
+        return True
+
+
+def create_set():
+    new_set = SetADT()
+    elements = input("Enter elements (comma-separated): ").split(',')
+    for element in elements:
+        new_set.add(int(element))
+    return new_set
+
+
+def print_set_elements(set_obj):
+    print("Set:", list(set_obj.iterator()))
+
+
+def main():
+    set1 = None
+    set2 = None
+
+    while True:
+        print("\nMenu:")
+        print("1. Create/Set Set 1")
+        print("2. Create/Set Set 2")
+        print("3. Print Set 1 Elements")
+        print("4. Print Set 2 Elements")
+        print("5. Intersection of Set 1 and Set 2")
+        print("6. Union of Set 1 and Set 2")
+        print("7. Difference (Set1 - Set2)")
+        print("8. Check if Set 1 is a Subset of Set 2")
+        print("9. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            set1 = create_set()
+        elif choice == '2':
+            set2 = create_set()
+        elif choice == '3':
+            if set1:
+                print_set_elements(set1)
+            else:
+                print("Set 1 is not created yet.")
+        elif choice == '4':
+            if set2:
+                print_set_elements(set2)
+            else:
+                print("Set 2 is not created yet.")
+        elif choice == '5':
+            if set1 and set2:
+                print("Intersection:", list(set1.intersection(set2).iterator()))
+            else:
+                print("Both sets need to be created first.")
+        elif choice == '6':
+            if set1 and set2:
+                print("Union:", list(set1.union(set2).iterator()))
+            else:
+                print("Both sets need to be created first.")
+        elif choice == '7':
+            if set1 and set2:
+                print("Difference (Set1 - Set2):", list(set1.difference(set2).iterator()))
+            else:
+                print("Both sets need to be created first.")
+        elif choice == '8':
+            if set1 and set2:
+                print("Set 1 is a subset of Set 2:", set1.subset(set2))
+            else:
+                print("Both sets need to be created first.")
+        elif choice == '9':
+            print("Exiting program...")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+
+if __name__ == "__main__":
+    main()
